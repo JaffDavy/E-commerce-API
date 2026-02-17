@@ -3,9 +3,11 @@ import express from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from './utils/logger.js';
+import cors from 'cors'
 
 import indexRouter from './routes/index.js'
 import usersRouter from './routes/users.js'
+import productRoutes from './routes/productRoutes.js'
 
 const app = express();
 
@@ -13,8 +15,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+app.use(cors())
+
+app.use(express.json());
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/api', productRoutes)
+
+app.get('/', (req, res) => res.send('Ecommerce API is running'))
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
