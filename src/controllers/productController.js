@@ -1,7 +1,7 @@
 import pool from '../config/db.js'
 import logger from '../utils/logger.js';
 
-import { createProduct, getAllProducts, getProductById } from '../models/productModel.js'
+import { createProduct, getAllProducts, getProductById, updateProductById } from '../models/productModel.js'
 
 // add a product
 export const addProduct = async (req, res) => {
@@ -66,6 +66,32 @@ export const getProduct = async (req, res) => {
 
     } catch (error) {
         logger.error(`Failed to fetch product ID ${req.params.id}: ${error.message}`);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// update a product 
+export const updateProduct = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (isNaN(id)) {
+            logger.warn(`Invalid product ID: ${id}`);
+            return res.status(400).json({ error: 'Invalid product ID' });
+        }
+
+        const updatedProduct = await updateProductById(id, req.body);
+
+        if (!updatedProduct) {
+            logger.warn(`Product not found with ID: ${id}`);
+            return res.status(404).json({ error: 'Product not found' });
+        }
+
+        logger.info(`Product updated successfully, ID: ${id}`);
+        res.status(200).json(updatedProduct);
+
+    } catch (error) {
+        logger.error(`Failed to update product ID ${req.params.id}: ${error.message}`);
         res.status(500).json({ error: error.message });
     }
 };

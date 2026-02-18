@@ -40,3 +40,36 @@ export const getProductById = async (id) => {
         throw err;
     }
 };
+
+export const updateProductById = async (id, data) => {
+    try {
+        const { name, price, description, category } = data;
+
+        const result = await pool.query(
+            `
+            UPDATE products
+            SET 
+                name = COALESCE($1, name),
+                price = COALESCE($2, price),
+                description = COALESCE($3, description),
+                category = COALESCE($4, category),
+                created_at = NOW()
+            WHERE id = $5
+            RETURNING *
+            `,
+            [name, price, description, category, id]
+        );
+
+        if (result.rowCount === 0) {
+            logger.warn(`Product not found with ID: ${id}`);
+            return null;
+        }
+
+        logger.info(`Product updated successfully, ID: ${id}`);
+        return result.rows[0];
+
+    } catch (err) {
+        logger.error(`Failed to update product ID ${id}: ${err.message}`);
+        throw err;
+    }
+};
