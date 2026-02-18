@@ -20,3 +20,23 @@ export const getAllProducts = async () => {
         throw err;
     }
 };
+
+export const getProductById = async (id) => {
+    try {
+        const result = await pool.query(
+            'SELECT * FROM products WHERE id = $1',
+            [id]
+        );
+
+        if (result.rowCount === 0) {
+            logger.warn(`Product not found with ID: ${id}`);
+            return null;
+        }
+
+        logger.info(`Product fetched successfully, ID: ${id}`);
+        return result.rows[0];
+    } catch (err) {
+        logger.error(`Failed to fetch product ID ${id}: ${err.message}`);
+        throw err;
+    }
+};

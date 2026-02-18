@@ -1,7 +1,7 @@
 import pool from '../config/db.js'
 import logger from '../utils/logger.js';
 
-import { createProduct, getAllProducts } from '../models/productModel.js'
+import { createProduct, getAllProducts, getProductById } from '../models/productModel.js'
 
 // add a product
 export const addProduct = async (req, res) => {
@@ -23,6 +23,7 @@ export const addProduct = async (req, res) => {
     }
 };
 
+// get all products in the db
 export const getProducts = async (req, res) => {
     try {
         const { category } = req.query;
@@ -39,6 +40,32 @@ export const getProducts = async (req, res) => {
         res.status(200).json(products);
     } catch (error) {
         logger.error(`Failed to fetch products: ${error.message}`);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// get a single product 
+export const getProduct = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (isNaN(id)) {
+            logger.warn(`Invalid product ID: ${id}`);
+            return res.status(400).json({ error: 'Invalid product ID' });
+        }
+
+        const product = await getProductById(id);
+
+        if (!product) {
+            logger.warn(`Product not found with ID: ${id}`);
+            return res.status(404).json({ error: 'Product not found' });
+        }
+
+        logger.info(`Product fetched successfully, ID: ${id}`);
+        res.status(200).json(product);
+
+    } catch (error) {
+        logger.error(`Failed to fetch product ID ${req.params.id}: ${error.message}`);
         res.status(500).json({ error: error.message });
     }
 };
