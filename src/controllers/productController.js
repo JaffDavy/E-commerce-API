@@ -1,7 +1,7 @@
 import pool from '../config/db.js'
 import logger from '../utils/logger.js';
 
-import { createProduct } from '../models/productModel.js'
+import { createProduct, getAllProducts } from '../models/productModel.js'
 
 // add a product
 export const addProduct = async (req, res) => {
@@ -20,5 +20,25 @@ export const addProduct = async (req, res) => {
     } catch (err) {
         logger.error(`Failed to create product: ${err.message}`);
         res.status(500).json({ error: err.message });
+    }
+};
+
+export const getProducts = async (req, res) => {
+    try {
+        const { category } = req.query;
+        let products;
+
+        if (category) {
+            products = await filterProductsByCategory(category);
+            logger.info(`Products fetched by category: ${category}`);
+        } else {
+            products = await getAllProducts();
+            logger.info('All products fetched');
+        }
+
+        res.status(200).json(products);
+    } catch (error) {
+        logger.error(`Failed to fetch products: ${error.message}`);
+        res.status(500).json({ error: error.message });
     }
 };
