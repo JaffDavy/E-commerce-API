@@ -73,3 +73,24 @@ export const updateProductById = async (id, data) => {
         throw err;
     }
 };
+
+export const deleteProductById = async (id) => {
+    try {
+        const result = await pool.query(
+            'DELETE FROM products WHERE id = $1 RETURNING *',
+            [id]
+        );
+
+        if (result.rowCount === 0) {
+            logger.warn(`Product not found with ID: ${id}`);
+            return null;
+        }
+
+        logger.info(`Product deleted successfully, ID: ${id}`);
+        return result.rows[0];
+
+    } catch (err) {
+        logger.error(`Failed to delete product ID ${id}: ${err.message}`);
+        throw err;
+    }
+};
