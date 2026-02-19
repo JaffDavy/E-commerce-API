@@ -4,17 +4,19 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from './utils/logger.js';
 import cors from 'cors'
+import swaggerUi from 'swagger-ui-express'
+import YAML from 'yamljs'
 
 import indexRouter from './routes/index.js'
 import usersRouter from './routes/users.js'
 import productRoutes from './routes/productRoutes.js'
 
 const app = express();
+const swaggerDocument = YAML.load('./src/swaggerYaml/swagger.yaml')
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-
 app.use(cors())
 
 app.use(express.json());
@@ -22,6 +24,7 @@ app.use(express.json());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/api', productRoutes)
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 app.get('/', (req, res) => res.send('Ecommerce API is running'))
 
