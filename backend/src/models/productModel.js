@@ -21,6 +21,14 @@ export const getAllProducts = async () => {
     }
 };
 
+export const filterProductsByCategory = async (category) => {
+    const result = await pool.query(
+        'SELECT * FROM products WHERE category ILIKE $1', 
+        [`%${category}%`]
+    );
+    return result.rows;
+};
+
 export const getProductById = async (id) => {
     try {
         const result = await pool.query(

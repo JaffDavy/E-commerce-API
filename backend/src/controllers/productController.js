@@ -1,7 +1,7 @@
 import pool from '../config/db.js'
 import logger from '../utils/logger.js';
 
-import { createProduct, getAllProducts, getProductById, updateProductById, deleteProductById } from '../models/productModel.js'
+import { createProduct, getAllProducts, getProductById, updateProductById, deleteProductById, filterProductsByCategory } from '../models/productModel.js'
 
 // add a product
 export const addProduct = async (req, res) => {
