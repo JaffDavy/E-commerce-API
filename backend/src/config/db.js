@@ -30,7 +30,7 @@ export const connectToDb = async () => {
         logger.info('✅ Successfully connected to the database');
         client.release()
     } catch (err) {
-        logger.error(`❌ DATABASE CONNECTION ERROR:', err.message`)
+        logger.error(`❌ DATABASE CONNECTION ERROR: ${err.message}`)
         process.exit(1)
     }
 }
