@@ -21,8 +21,6 @@ const poolConfig = isProduction
 
 const pool = new Pool(poolConfig)
 
-// connect to the database with logging 
-
 export const connectToDb = async () => {
     try {
         logger.info(`Attempting DB connection. Mode: ${isProduction ? 'Production' : 'Local'}`)
@@ -34,8 +32,6 @@ export const connectToDb = async () => {
         process.exit(1)
     }
 }
-
-// executes queries with logging performance
 
 export const query = async (text, params) => {
     const start = Date.now()
