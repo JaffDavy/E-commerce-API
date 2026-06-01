@@ -27,7 +27,7 @@ paths:
         - Products
       requestBody:
         required: true
-        content:
+        content:   
           application/json:
             schema:
               $ref: '#/components/schemas/ProductInput'
