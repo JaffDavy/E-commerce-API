@@ -19,13 +19,7 @@ const poolConfig = isProduction
       port: parseInt(process.env.DB_PORT, 10),
     };
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl:
-    process.env.NODE_ENV === "production"
-      ? { rejectUnauthorized: false }
-      : false,
-});
+const pool = new Pool(poolConfig); // ✅ use poolConfig instead of duplicating the logic
 
 export const connectToDb = async () => {
   try {
@@ -38,6 +32,7 @@ export const connectToDb = async () => {
     );
   }
 };
+
 export const query = async (text, params) => {
   const start = Date.now();
   try {

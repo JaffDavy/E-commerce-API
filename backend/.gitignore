@@ -4,3 +4,4 @@
 /src/logs/*.log
 /logs/
 /*.log
+.env.test
