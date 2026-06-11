@@ -1,10 +1,10 @@
-import 'dotenv/config'
-import pg from 'pg'
-import logger from '../utils/logger.js'
+import "dotenv/config";
+import pg from "pg";
+import logger from "../utils/logger.js";
 
-const { Pool } = pg
+const { Pool } = pg;
 
-const isProduction = process.env.NODE_ENV === 'production'
+const isProduction = process.env.NODE_ENV === "production";
 
 const poolConfig = isProduction
   ? {
@@ -19,31 +19,36 @@ const poolConfig = isProduction
       port: parseInt(process.env.DB_PORT, 10),
     };
 
-const pool = new Pool(poolConfig)
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl:
+    process.env.NODE_ENV === "production"
+      ? { rejectUnauthorized: false }
+      : false,
+});
 
 export const connectToDb = async () => {
-    try {
-        logger.info(`Attempting DB connection. Mode: ${isProduction ? 'Production' : 'Local'}`)
-        const client = await pool.connect()
-        logger.info('✅ Successfully connected to the database');
-        client.release()
-    } catch (err) {
-        logger.error(`❌ DATABASE CONNECTION ERROR: ${err.message}`)
-        process.exit(1)
-    }
-}
-
+  try {
+    await pool.connect();
+    console.log("Connected to DB");
+  } catch (err) {
+    console.error(
+      "DB connection error — server will continue but DB may be unavailable:",
+      err,
+    );
+  }
+};
 export const query = async (text, params) => {
-    const start = Date.now()
-     try {
-        const response = await pool.query(text, params)
-        const duration = Date.now() - start
-        logger.info(`Query executed in ${duration}ms: ${text.substring(0, 100)}`)
-        return response
-     } catch (error) {
-        logger.error(`Error executing query: ${error.message}`)
-        throw error
-     }
-}
+  const start = Date.now();
+  try {
+    const response = await pool.query(text, params);
+    const duration = Date.now() - start;
+    logger.info(`Query executed in ${duration}ms: ${text.substring(0, 100)}`);
+    return response;
+  } catch (error) {
+    logger.error(`Error executing query: ${error.message}`);
+    throw error;
+  }
+};
 
-export default pool
+export default pool;
