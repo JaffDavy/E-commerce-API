@@ -71,16 +71,24 @@ function App() {
   return (
     <div
       style={{
-        overflow: "auto",
+        boxSizing: "border-box",
         width: "100%",
-        padding: "20px",
+        maxWidth: "100%",
+        padding: "16px",
         fontFamily: "sans-serif",
+        overflowX: "hidden",
       }}
     >
       <h1>🛒 Products Dashboard</h1>
 
       <section
-        style={{ marginBottom: "20px", background: "#f4f4f4", padding: "15px" }}
+        style={{
+          marginBottom: "20px",
+          background: "#f4f4f4",
+          padding: "15px",
+          boxSizing: "border-box",
+          width: "100%",
+        }}
       >
         <h3>Filter by Category</h3>
         <input
@@ -88,6 +96,7 @@ function App() {
           placeholder="Filter..."
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
+          style={{ width: "100%", boxSizing: "border-box" }}
         />
       </section>
 
@@ -96,15 +105,21 @@ function App() {
           marginBottom: "30px",
           border: "1px solid #ddd",
           padding: "15px",
+          boxSizing: "border-box",
+          width: "100%",
         }}
       >
         <h3>{editId ? "📝 Edit Product" : "➕ Add New Product"}</h3>
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={handleSubmit}
+          style={{ display: "flex", flexDirection: "column", gap: "10px" }}
+        >
           <input
             placeholder="Name"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
+            style={{ width: "100%", boxSizing: "border-box" }}
           />
           <input
             placeholder="Price"
@@ -114,6 +129,7 @@ function App() {
               setFormData({ ...formData, price: e.target.value })
             }
             required
+            style={{ width: "100%", boxSizing: "border-box" }}
           />
           <input
             placeholder="Category"
@@ -122,6 +138,7 @@ function App() {
               setFormData({ ...formData, category: e.target.value })
             }
             required
+            style={{ width: "100%", boxSizing: "border-box" }}
           />
           <input
             placeholder="Description"
@@ -130,76 +147,90 @@ function App() {
               setFormData({ ...formData, description: e.target.value })
             }
             required
+            style={{ width: "100%", boxSizing: "border-box" }}
           />
 
-          <button
-            type="submit"
-            style={{
-              backgroundColor: editId ? "orange" : "green",
-              color: "white",
-            }}
-          >
-            {editId ? "Update Product" : "Create Product"}
-          </button>
-
-          {editId && (
+          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
             <button
-              type="button"
-              onClick={() => {
-                setEditId(null);
-                setFormData({
-                  name: "",
-                  price: "",
-                  category: "",
-                  description: "",
-                });
+              type="submit"
+              style={{
+                backgroundColor: editId ? "orange" : "green",
+                color: "white",
+                padding: "8px 16px",
               }}
             >
-              Cancel
+              {editId ? "Update Product" : "Create Product"}
             </button>
-          )}
+
+            {editId && (
+              <button
+                type="button"
+                onClick={() => {
+                  setEditId(null);
+                  setFormData({
+                    name: "",
+                    price: "",
+                    category: "",
+                    description: "",
+                  });
+                }}
+                style={{ padding: "8px 16px" }}
+              >
+                Cancel
+              </button>
+            )}
+          </div>
         </form>
       </section>
 
-      <table
-        border="1"
-        cellPadding="10"
-        style={{ width: "100%", borderCollapse: "collapse" }}
+      {/* Table wrapped in overflow container */}
+      <div
+        style={{ overflowX: "auto", width: "100%", boxSizing: "border-box" }}
       >
-        <thead>
-          <tr style={{ backgroundColor: "#eee" }}>
-            <th>Name</th>
-            <th>Category</th>
-            <th>Price</th>
-            <th>Description</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((p) => (
-            <tr key={p.id}>
-              <td>{p.name}</td>
-              <td>{p.category}</td>
-              <td>{p.price} frs</td>
-              <td>{p.description}</td>
-              <td>
-                <button
-                  onClick={() => handleEditClick(p)}
-                  style={{ marginRight: "10px" }}
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => deleteProduct(p.id)}
-                  style={{ color: "red" }}
-                >
-                  Delete
-                </button>
-              </td>
+        <table
+          border="1"
+          cellPadding="10"
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            minWidth: "480px",
+          }}
+        >
+          <thead>
+            <tr style={{ backgroundColor: "#eee" }}>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Description</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {products.map((p) => (
+              <tr key={p.id}>
+                <td>{p.name}</td>
+                <td>{p.category}</td>
+                <td>{p.price} frs</td>
+                <td>{p.description}</td>
+                <td>
+                  <button
+                    onClick={() => handleEditClick(p)}
+                    style={{ marginRight: "10px" }}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => deleteProduct(p.id)}
+                    style={{ color: "red" }}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
